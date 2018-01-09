@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     fontSize: globalStyles.fontSize.tabTitle,
     lineHeight: '1.6',
     minWidth: 0, // see https://stackoverflow.com/a/36247448/4902448
-    marginLeft: '4px',
+    marginLeft: '6px',
     overflow: 'hidden',
 
     // this enable us to have gradient text
