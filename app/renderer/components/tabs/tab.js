@@ -476,22 +476,22 @@ const styles = StyleSheet.create({
   tabArea_isActive: {
     zIndex: 300,
     '--tab-background': theme.tab.active.background,
-    '--border-bottom-color': theme.tab.active.background,
+    '--tab-background-hover': theme.tab.hover.active.background,
     '--tab-border-color-bottom': 'var(--tab-background)',
     '--tab-transit-duration': theme.tab.transitionDurationIn,
     '--tab-transit-easing': theme.tab.transitionEasingIn
   },
 
   tabArea_isPreview: {
-    '--tab-background': 'white',
-    '--tab-background-hover': 'white',
+    '--tab-background': theme.tab.preview.background,
+    '--tab-background-hover': theme.tab.preview.background,
     '--tab-color': theme.tab.color,
     '--tab-color-hover': theme.tab.color,
-    '--tab-border-color': 'white',
-    '--tab-border-color-hover': 'white',
+    '--tab-border-color': theme.tab.preview.background,
+    '--tab-border-color-hover': theme.tab.preview.background,
     zIndex: 310,
-    transform: 'scale(1.08)',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.22)',
+    transform: `scale(${theme.tab.preview.scale})`,
+    boxShadow: theme.tab.preview.boxShadow,
     // want the zindex to change immediately when previewing, but delay when un-previewing
     '--tab-zindex-delay': '0s',
     '--tab-transit-duration': theme.tab.transitionDurationIn,

@@ -48,7 +48,7 @@
     },
 
     tabsToolbar: {
-      backgroundColor: '#ddd',
+      backgroundColor: '#cdcfd2',
 
       border: {
         color: '#bbb'
@@ -141,14 +141,16 @@
       transitionDurationIn: '200ms',
       transitionEasingOut: 'ease-in',
       transitionEasingIn: 'ease-out',
-      background: '#ddd',
+      background: '#cdcfd2',
       borderColor: '#bbb',
       borderWidth: 1,
-      color: '#5a5a5a',
+      color: '#333',
 
       hover: {
-        background: '#eaeaea',
-
+        background: '#dbdddf',
+        active: {
+          background: '#f3f3f3'
+        },
         private: {
           borderColor: 'rgba(75, 60, 110, .7)'
         }
@@ -159,7 +161,7 @@
       },
 
       active: {
-        background: '#f8f8f8',
+        background: '#e9e9ea',
 
         private: {
           background: '#4b3c6e',
@@ -170,6 +172,12 @@
       private: {
         background: '#d9d6e0',
         color: '#4b3c6e'
+      },
+
+      preview: {
+        background: 'white',
+        boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.22)',
+        scale: '1.06'
       },
 
       icon: {
