@@ -146,6 +146,18 @@
       borderWidth: 1,
       color: '#333',
 
+      closeButton: {
+        background: 'transparent',
+        borderRadius: '2px',
+        active: {
+          background: '#cb2c00'
+        },
+        hover: {
+          color: 'white',
+          background: '#fd4f01'
+        }
+      },
+
       hover: {
         background: '#dbdddf',
         active: {
