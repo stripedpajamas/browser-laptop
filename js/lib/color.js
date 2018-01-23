@@ -19,3 +19,26 @@ module.exports.getTextColorForBackground = (color) => {
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
   return yiq >= 128 ? 'black' : 'white'
 }
+
+module.exports.removeAlphaChannelForBackground = (color, bR, bG, bB) => {
+  const rgba = module.exports.parseColor(color)
+  if (!rgba) {
+    return null
+  }
+  // handle no alpha channel
+  if (rgba.length !== 4 || Number.isNaN(rgba[3])) {
+    return color
+  }
+
+  // remove alpha channel, blending color with background
+  const [oR, oG, oB, oA] = rgba
+
+  const newR = blendChannel(oR, bR, oA)
+  const newG = blendChannel(oG, bG, oA)
+  const newB = blendChannel(oB, bB, oA)
+  return `rgb(${newR}, ${newG}, ${newB})`
+}
+
+function blendChannel (original, background, alpha) {
+  return Math.round((original * alpha) + ((1 - alpha) * background))
+}
