@@ -1094,8 +1094,7 @@ module.exports.defaultAppState = () => {
       btc2BatNotifiedTimestamp: now,
       btc2BatTransitionPending: false
     },
-    usermodel: {
-    }
+    userModel: {}
   }
 }
 
