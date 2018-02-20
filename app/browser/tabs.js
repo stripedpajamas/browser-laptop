@@ -1359,7 +1359,28 @@ const api = {
     return state
   },
   forgetTab: (tabId) => {
-    webContentsCache.cleanupWebContents(tabId)
+    const tab = webContentsCache.getWebContents(tabId)
+    if (!tab) {
+      return
+    }
+    // Do not remove tab until it is destroyed, as we still need to refer to it,
+    // even though state has let us know it does not care about the tab anymore
+    // But, we do this here in case state still needs to refer to tab
+    // after it is destroyed, for a brief time.
+    if (tab.isDestroyed()) {
+      if (shouldDebugTabEvents) {
+        console.log(`Tab [${tabId}] forgetTab: is already destroyed, cleaning up webContents from cache immediately`)
+      }
+
+      webContentsCache.cleanupWebContents(tabId)
+    } else {
+      tab.once('will-destroy', function () {
+        if (shouldDebugTabEvents) {
+          console.log(`Tab [${tabId}] forgetTab: 'will-destroy' emitted, cleaning up webContents from cache`)
+        }
+        webContentsCache.cleanupWebContents(tabId)
+      })
+    }
   }
 }
 
