@@ -1408,6 +1408,27 @@ const clientprep = () => {
   _internal.verboseP = ledgerClient.prototype.boolion(process.env.LEDGER_PUBLISHER_VERBOSE)
 }
 
+const roundTripFromWindow = (params, callback) => {
+  if (!params.url) {
+    callback(new Error('Url is missing'))
+    return
+  }
+
+  request.fetchPublisherInfo(params.url, {
+    method: 'GET',
+    responseType: 'text',
+    headers: {
+      'content-type': 'application/json; charset=utf-8'
+    }
+  }, (error, body) => {
+    if (error) {
+      return callback(error)
+    }
+
+    return callback(null, null, body)
+  })
+}
+
 const roundtrip = (params, options, callback) => {
   let parts = typeof params.server === 'string' ? urlParse(params.server)
     : typeof params.server !== 'undefined' ? params.server
@@ -1434,6 +1455,11 @@ const roundtrip = (params, options, callback) => {
     parts.search = parts.path.substring(i)
   } else {
     parts.pathname = parts.path
+  }
+
+  if (options.windowP) {
+    roundTripFromWindow({url: urlFormat(parts), verboseP: options.verboseP}, callback)
+    return
   }
 
   options = {
