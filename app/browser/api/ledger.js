@@ -1409,7 +1409,11 @@ const clientprep = () => {
 }
 
 const roundTripFromWindow = (params, callback) => {
-  if (!params.url) {
+  if (!callback) {
+    return
+  }
+
+  if (!params || !params.url) {
     callback(new Error('Url is missing'))
     return
   }
@@ -2895,6 +2899,7 @@ const getMethods = () => {
       activityRoundTrip,
       pathName,
       onReferralInit,
+      roundTripFromWindow,
       onReferralCodeRead,
       onVerifiedPStatus
     }

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 const ipc = chrome.ipcRenderer
 
 ipc.send('got-background-page-webcontents')
@@ -78,8 +82,8 @@ const getImageRules = () => {
     wrap(html => getContent(html.querySelector('meta[name="sailthru.image.thumb"]'))),
     wrap(html => getContent(html.querySelector('meta[name="sailthru.image.full"]'))),
     wrap(html => getContent(html.querySelector('meta[name="sailthru.image"]'))),
-    wrap(html => getValue(html, html.querySelector('article img[src]'), getSrc)),
-    wrap(html => getValue(html, html.querySelector('#content img[src]'), getSrc)),
+    wrap(html => getValue(html.querySelectorAll('article img[src]'), getSrc)),
+    wrap(html => getValue(html.querySelectorAll('#content img[src]'), getSrc)),
     wrap(html => getSrc(html.querySelector('img[alt*="author"]'))),
     wrap(html => getSrc(html.querySelector('img[src]')))
   ]
@@ -118,27 +122,35 @@ const getAuthorRules = () => {
     // Youtube
     wrap(html => getText(html.querySelector('#owner-name'))),
     wrap(html => getText(html.querySelector('#channel-title'))),
-    wrap(html => getValue(html, html.querySelector('[class*="user-info"]'))),
+    wrap(html => getValue(html.querySelectorAll('[class*="user-info"]'))),
     // Regular
     wrap(html => getContent(html.querySelector('meta[property="author"]'))),
     wrap(html => getContent(html.querySelector('meta[property="article:author"]'))),
     wrap(html => getContent(html.querySelector('meta[name="author"]'))),
     wrap(html => getContent(html.querySelector('meta[name="sailthru.author"]'))),
-    wrap(html => getValue(html, html.querySelector('[rel="author"]'))),
-    wrap(html => getValue(html, html.querySelector('[itemprop*="author"] [itemprop="name"]'))),
-    wrap(html => getValue(html, html.querySelector('[itemprop*="author"]'))),
+    wrap(html => getValue(html.querySelectorAll('[rel="author"]'))),
+    wrap(html => getValue(html.querySelectorAll('[itemprop*="author"] [itemprop="name"]'))),
+    wrap(html => getValue(html.querySelectorAll('[itemprop*="author"]'))),
     wrap(html => getContent(html.querySelector('meta[property="book:author"]'))),
-    strict(wrap(html => getValue(html, html.querySelector('a[class*="author"]')))),
-    strict(wrap(html => getValue(html, html.querySelector('[class*="author"] a')))),
-    strict(wrap(html => getValue(html, html.querySelector('a[href*="/author/"]')))),
-    wrap(html => getValue(html, html.querySelector('a[class*="screenname"]'))),
-    strict(wrap(html => getValue(html, html.querySelector('[class*="author"]')))),
-    strict(wrap(html => getValue(html, html.querySelector('[class*="byline"]'))))
+    strict(wrap(html => getValue(html.querySelectorAll('a[class*="author"]')))),
+    strict(wrap(html => getValue(html.querySelectorAll('[class*="author"] a')))),
+    strict(wrap(html => getValue(html.querySelectorAll('a[href*="/author/"]')))),
+    wrap(html => getValue(html.querySelectorAll('a[class*="screenname"]'))),
+    strict(wrap(html => getValue(html.querySelectorAll('[class*="author"]')))),
+    strict(wrap(html => getValue(html.querySelectorAll('[class*="byline"]'))))
   ]
 }
 
 // Helpers
-const getText = (node) => ((node && (node.outerHTML || new XMLSerializer().serializeToString(node))) || '').replace(/([\s\n]*<[^>]*>[\s\n]*)+/g, ' ')
+const getText = (node) => {
+  if (!node) {
+    return ''
+  }
+
+  const html = (node.outerHTML || new XMLSerializer().serializeToString(node)) || ''
+
+  return html.replace(/([\s\n]*<[^>]*>[\s\n]*)+/g, ' ')
+}
 
 const urlCheck = (url) => {
   try {
@@ -165,53 +177,97 @@ const getSrc = (selector) => {
   return selector.src
 }
 
-const urlTest = (url, {relative = true}) => {
+const urlTest = (url, opts) => {
+  let relative
+  if (opts == null) {
+    relative = true
+  } else {
+    relative = opts.relative == null ? true : opts.relative
+  }
+
   return relative
-    ? !isAbsoluteUrl(url) || urlCheck(url)
+    ? isAbsoluteUrl(url) === false || urlCheck(url)
     : urlCheck(url)
 }
 
-const isEmpty = (value) => value == null
+const isEmpty = (value) => value == null || value.length === 0
 const isUrl = (url, opts = {}) => !isEmpty(url) && urlTest(url, opts)
 const getUrl = (baseUrl, relativePath = '') => {
-  return !isAbsoluteUrl(relativePath)
+  return isAbsoluteUrl(relativePath) === false
     ? resolveUrl(baseUrl, relativePath)
     : relativePath
 }
 
 const REGEX_STRICT = /^\S+\s+\S+/
-const strict = rule => $ => {
-  const value = rule($)
+const strict = value => {
   return REGEX_STRICT.test(value) && value
 }
 
 const titleize = (src, {removeBy = false} = {}) => {
+  if (!src) {
+    return ''
+  }
+
   let title = createTitle(src)
   if (removeBy) title = removeByPrefix(title).trim()
   return title
 }
 
-const defaultFn = el => el.text().trim()
+const defaultFn = (el) => {
+  if (!el) {
+    return ''
+  }
 
-const getValue = (html, collection, fn = defaultFn) => {
+  const text = getText(el) || ''
+  return text.trim()
+}
+
+const getValue = (collection, fn = defaultFn) => {
   if (!collection || !fn) {
     return null
   }
 
-  const el = collection.filter((i, el) => fn(el)).first()
-  return fn(el)
+  if (!NodeList.prototype.isPrototypeOf(collection)) {
+    return fn(collection)
+  }
+
+  for (const ele of collection) {
+    const value = fn(ele)
+    if (value) {
+      return value
+    }
+  }
+
+  return null
 }
 
 const getThumbnailUrl = id => {
+  if (id == null) {
+    return null
+  }
+
   return `https://img.youtube.com/vi/${id}/sddefault.jpg`
 }
 
 const getVideoId = (str) => {
   let metadata = {}
 
+  if (typeof str !== 'string') {
+		return metadata
+	}
+
+	// remove surrounding whitespaces or linefeeds
+	str = str.trim()
+
+	// remove the '-nocookie' flag from youtube urls
+	str = str.replace('-nocookie', '')
+
+	// remove any leading `www.`
+	str = str.replace('/www.', '/')
+
   if (/youtube|youtu\.be|i.ytimg\./.test(str)) {
     metadata = {
-      id: getYoutubeId(str),
+      id: getYouTubeId(str),
       service: 'youtube'
     }
   }
@@ -220,7 +276,11 @@ const getVideoId = (str) => {
 }
 
 // https://github.com/radiovisual/get-video-id
-const getYoutubeId = (str) => {
+const getYouTubeId = (str) => {
+  if (str == null) {
+    return ''
+  }
+
   // short code
   const shortCode = /youtube:\/\/|https?:\/\/youtu\.be\//g
   if (shortCode.test(str)) {
@@ -245,7 +305,7 @@ const getYoutubeId = (str) => {
   // v= or vi=
   const parameterWebP = /\/an_webp\//g
   if (parameterWebP.test(str)) {
-    const webP = str.split(parameterP)[1]
+    const webP = str.split(parameterWebP)[1]
     return stripParameters(webP)
   }
 
@@ -271,10 +331,17 @@ const getYoutubeId = (str) => {
 }
 
 const stripParameters = (str) => {
-  // Split parameters or split folder separator
-  if (str.indexOf('?') > -1) {
+  if (str == null) {
+    return ''
+  }
+
+  // Split parameters
+  if (str.includes('?')) {
     return str.split('?')[0]
-  } else if (str.indexOf('/') > -1) {
+  }
+
+  // Split folder separator
+  if (str.includes('/')) {
     return str.split('/')[0]
   }
 
@@ -307,9 +374,13 @@ const replacements = [
   [/"/g, '\u2033'],
   // prime
   [/'/g, '\u2032']
-];
+]
 
 const smartQuotes = (str) => {
+  if (!replacements || !str) {
+    return ''
+  }
+
   replacements.forEach(replace => {
     const replacement = typeof replace[1] === 'function' ? replace[1]({}) : replace[1]
     str = str.replace(replace[0], replacement)
@@ -319,10 +390,18 @@ const smartQuotes = (str) => {
 
 const REGEX_BY = /^[\s\n]*by|@[\s\n]*/i
 const removeByPrefix = (str = '') => {
+  if (str == null) {
+    return ''
+  }
+
   return str.replace(REGEX_BY, '').trim()
 }
 
 const createTitle = (str = '') => {
+  if (str == null) {
+    return ''
+  }
+
   str = str.trim().replace(/\s{2,}/g, ' ')
   return smartQuotes(str)
 }
@@ -330,7 +409,7 @@ const createTitle = (str = '') => {
 // https://github.com/sindresorhus/is-absolute-url
 const isAbsoluteUrl = (url) => {
   if (!isString(url)) {
-    return url
+    return
   }
 
   return /^[a-z][a-z0-9+.-]*:/.test(url)
@@ -338,6 +417,11 @@ const isAbsoluteUrl = (url) => {
 
 const resolveUrl = (baseUrl, relativePath) => {
   let url = baseUrl
+
+  if (!relativePath) {
+    return url
+  }
+
   try {
     url = new URL(relativePath, [baseUrl])
   } catch (e) {}
@@ -346,3 +430,34 @@ const resolveUrl = (baseUrl, relativePath) => {
 }
 
 const isString = (str) => typeof str === 'string'
+
+module.exports = {
+  getMetaData,
+  getData,
+  getImageRules,
+  getTitleRules,
+  getAuthorRules,
+  getText,
+  urlCheck,
+  getContent,
+  getSrc,
+  urlTest,
+  isEmpty,
+  isUrl,
+  getUrl,
+  strict,
+  titleize,
+  defaultFn,
+  getValue,
+  getThumbnailUrl,
+  getVideoId,
+  getYouTubeId,
+  stripParameters,
+  smartQuotes,
+  REGEX_BY,
+  removeByPrefix,
+  createTitle,
+  isAbsoluteUrl,
+  resolveUrl,
+  isString
+}
