@@ -89,7 +89,7 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         let siteSafeBrowsing = true
         let safeBrowsingAll = state.get('safeBrowsingAll')
 
-        if (safeBrowsingAll == undefined) {
+        if (safeBrowsingAll === undefined) {
           return
         }
 
