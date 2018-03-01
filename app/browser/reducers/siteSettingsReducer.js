@@ -82,7 +82,7 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         break
       }
     case appConstants.APP_TAB_UPDATED:
-     {
+      {
         let url = action.get('tabValue').get('url')
         let parsedUrl = urlParse(url)
         let currentSiteSetting = state.get('siteSettings')
@@ -100,7 +100,7 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         setUserPref('safebrowsing.enabled',
                      state.get('safeBrowsingAll').get('enabled') &&
                      siteSafeBrowsing)
-     }
+      }
   }
   return state
 }
