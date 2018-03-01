@@ -448,6 +448,7 @@ class AboutPreferences extends React.Component {
       syncChainCodeOverlayVisible: false,
       syncDevicesListOverlayVisible: false,
       syncResetOverlayVisible: false,
+      syncRemoveOverlayVisible: false,
       syncRestoreEnabled: false,
       preferenceTab: this.tabFromCurrentHash,
       hintNumber: this.getNextHintNumber(),
@@ -672,6 +673,7 @@ class AboutPreferences extends React.Component {
           syncChainCodeOverlayVisible={this.state.syncChainCodeOverlayVisible}
           syncDevicesListOverlayVisible={this.state.syncDevicesListOverlayVisible}
           syncResetOverlayVisible={this.state.syncResetOverlayVisible}
+          syncRemoveOverlayVisible={this.state.syncRemoveOverlayVisible}
         />
         break
       case preferenceTabs.SHIELDS:
