@@ -87,6 +87,11 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         let parsedUrl = urlParse(url)
         let currentSiteSetting = state.get('siteSettings')
         let siteSafeBrowsing = true
+        let safeBrowsingAll = state.get('safeBrowsingAll')
+
+        if (safeBrowsingAll == undefined) {
+          return
+        }
 
         if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
           let ruleKey = `https?://${parsedUrl.host}`
@@ -98,7 +103,7 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         siteSafeBrowsing = siteSafeBrowsing === undefined ? true : siteSafeBrowsing
 
         setUserPref('safebrowsing.enabled',
-                     state.get('safeBrowsingAll').get('enabled') &&
+                     safeBrowsingAll.get('enabled') &&
                      siteSafeBrowsing)
       }
   }
