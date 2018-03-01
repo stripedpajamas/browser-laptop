@@ -82,25 +82,25 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         break
       }
     case appConstants.APP_TAB_UPDATED:
-    {
-      let url = action.get('tabValue').get('url')
-      let parsedUrl = urlParse(url)
-      let currentSiteSetting = state.get('siteSettings')
-      let siteSafeBrowsing = true
+     {
+        let url = action.get('tabValue').get('url')
+        let parsedUrl = urlParse(url)
+        let currentSiteSetting = state.get('siteSettings')
+        let siteSafeBrowsing = true
 
-      if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
-        let ruleKey = `https?://${parsedUrl.host}`
-        let currentSettings = currentSiteSetting.get(ruleKey)
-        if (currentSettings != undefined) {
-          siteSafeBrowsing = currentSettings.get('safeBrowsing')
+        if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
+          let ruleKey = `https?://${parsedUrl.host}`
+          let currentSettings = currentSiteSetting.get(ruleKey)
+          if (currentSettings !== undefined) {
+            siteSafeBrowsing = currentSettings.get('safeBrowsing')
+          }
         }
-      }
-      siteSafeBrowsing = siteSafeBrowsing == undefined ? true : siteSafeBrowsing
+        siteSafeBrowsing = siteSafeBrowsing === undefined ? true : siteSafeBrowsing
 
-      setUserPref('safebrowsing.enabled',
-                   state.get('safeBrowsingAll').get('enabled') &&
-                   siteSafeBrowsing)
-    }
+        setUserPref('safebrowsing.enabled',
+                     state.get('safeBrowsingAll').get('enabled') &&
+                     siteSafeBrowsing)
+     }
   }
   return state
 }
