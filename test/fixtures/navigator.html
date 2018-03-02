@@ -1,0 +1,30 @@
+<html>
+	<button id='button'>bluetooth</button>
+	<button id='button2'>webusb</button>
+	<div id='bluetooth'>
+	testing...
+	</div>
+	<div id='webusb'>
+	testing...
+	</div>
+	<div id='devices'>
+	testing...
+	</div>
+    <script>
+		button.onclick = () => {
+		  navigator.bluetooth.requestDevice({acceptAllDevices: true}).catch((err) => {
+			  bluetooth.innerText = err
+		  })
+		}
+        button2.onclick = () => {
+		  navigator.usb.getDevices().then((dev) => {
+			devices.innerText = dev.length
+		  }).catch((err) => {
+			devices.innerText = err
+		  })
+		  navigator.usb.requestDevice({filters: []}).catch((err) => {
+			webusb.innerText = err
+		  })
+        }
+    </script>
+</html>

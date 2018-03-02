@@ -51,4 +51,23 @@ describe('content loading', function () {
       .windowByUrl(Brave.browserWindowUrl)
       .waitForTextValue('[data-test-id="tabTitle"]', 'fail')
   })
+
+  it('does not support bluetooth API', function * () {
+    const page1 = Brave.fixtureUrl('navigator.html')
+    yield this.app.client
+      .tabByIndex(0)
+      .url(page1)
+      .click('#button')
+      .waitForTextValue('#bluetooth', 'Error: navigator.bluetooth not supported.')
+  })
+
+  it('does not support webusb API', function * () {
+    const page1 = Brave.fixtureUrl('navigator.html')
+    yield this.app.client
+      .tabByIndex(0)
+      .url(page1)
+      .click('#button2')
+      .waitForTextValue('#webusb', 'Error: navigator.usb not supported.')
+      .waitForTextValue('#devices', '0')
+  })
 })
