@@ -94,7 +94,7 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         }
 
         if (currentSiteSetting !== undefined &&
-            parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
+          (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:')) {
           let ruleKey = `https?://${parsedUrl.host}`
           let currentSettings = currentSiteSetting.get(ruleKey)
           if (currentSettings !== undefined) {
