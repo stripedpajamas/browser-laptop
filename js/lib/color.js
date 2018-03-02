@@ -5,7 +5,14 @@
 module.exports.parseColor = (color) => {
   const div = document.createElement('div')
   div.style.color = color
-  return div.style.color.split('(')[1].split(')')[0].split(',')
+  const normalizedColor = div.style.color
+  if (typeof normalizedColor === 'string' &&
+      normalizedColor.includes('(') &&
+      normalizedColor.includes(')') &&
+      normalizedColor.includes(',')) {
+    return div.style.color.split('(')[1].split(')')[0].split(',')
+  }
+  return null
 }
 
 module.exports.getTextColorForBackground = (color) => {
