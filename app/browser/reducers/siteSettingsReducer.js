@@ -90,10 +90,11 @@ const siteSettingsReducer = (state, action, immutableAction) => {
         let safeBrowsingAll = state.get('safeBrowsingAll')
 
         if (safeBrowsingAll === undefined) {
-          return
+          break
         }
 
-        if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
+        if (currentSiteSetting !== undefined &&
+            parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
           let ruleKey = `https?://${parsedUrl.host}`
           let currentSettings = currentSiteSetting.get(ruleKey)
           if (currentSettings !== undefined) {

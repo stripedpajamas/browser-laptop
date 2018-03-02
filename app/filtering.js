@@ -548,10 +548,6 @@ function registerPermissionHandler (session, partition) {
 function updateDownloadState (win, downloadId, item, state) {
   updateElectronDownloadItem(win, downloadId, item, state)
 
-  if (win) {
-    win.webContents.send(messages.SHOW_DOWNLOADS_TOOLBAR)
-  }
-
   if (!item) {
     appActions.mergeDownloadDetail(downloadId, { state: downloadStates.INTERRUPTED })
     return
