@@ -172,8 +172,8 @@ class UrlBar extends React.Component {
             windowActions.nextUrlBarSuggestionSelected()
             e.preventDefault()
           }
-          break
         }
+        break
       case KeyCodes.DOWN:
         if (this.props.showUrlBarSuggestions) {
           windowActions.nextUrlBarSuggestionSelected()
