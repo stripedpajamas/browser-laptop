@@ -152,12 +152,28 @@ class UrlBar extends React.Component {
         windowActions.setUrlBarActive(false)
         windowActions.setRenderUrlBarSuggestions(false)
         break
+      case KeyCodes.P:
+        if (e.ctrlKey) {
+          if (this.props.showUrlBarSuggestions) {
+            windowActions.previousUrlBarSuggestionSelected()
+            e.preventDefault()
+          }
+        }
+        break
       case KeyCodes.UP:
         if (this.props.showUrlBarSuggestions) {
           windowActions.previousUrlBarSuggestionSelected()
           e.preventDefault()
         }
         break
+      case KeyCodes.N:
+        if (e.ctrlKey) {
+          if (this.props.showUrlBarSuggestions) {
+            windowActions.nextUrlBarSuggestionSelected()
+            e.preventDefault()
+          }
+          break
+        }
       case KeyCodes.DOWN:
         if (this.props.showUrlBarSuggestions) {
           windowActions.nextUrlBarSuggestionSelected()
