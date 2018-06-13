@@ -126,36 +126,6 @@ const updateUrlSuffix = (state, suggestionList, framePath) => {
 }
 
 /**
- * Updates the active frame state with what the URL bar should be (not only suffix).
- * @param suggestionList - The suggestion list to use to figure out the suffix.
- */
-const updateEntireUrl = (state, suggestionList, framePath) => {
-  if (framePath === undefined) {
-    framePath = activeFrameStatePath(state)
-  }
-  let selectedIndex = state.getIn(framePath.concat(['navbar', 'urlbar', 'suggestions', 'selectedIndex'])) || 0
-  const lastSuffix = state.getIn(framePath.concat(['navbar', 'urlbar', 'suggestions', 'urlSuffix']))
-  if (!selectedIndex && lastSuffix) {
-    selectedIndex = 0
-  }
-  const suggestion = suggestionList && suggestionList.get(selectedIndex)
-  let newUrl = ''
-  if (suggestion) {
-    const autocompleteEnabled = state.getIn(framePath.concat(['navbar', 'urlbar', 'suggestions', 'autocompleteEnabled']))
-
-    if (autocompleteEnabled) {
-      const normalizedSuggestion = suggestion.get && suggestion.get('location')
-        ? normalizeLocation(suggestion.get('location').toLowerCase())
-        : ''
-      newUrl = normalizedSuggestion
-    }
-  }
-  state = setNavBarUserInput(state, newUrl)
-  // state = state.setIn(framePath.concat(['navbar', 'urlbar', 'suggestions', 'urlSuffix']), newUrl)
-  return state
-}
-
-/**
  * Accepts whatever suffix is present as part of the user input
  */
 const acceptUrlSuffix = (state, framePath) => {
@@ -298,7 +268,6 @@ const urlBarReducer = (state, action) => {
       } else {
         state = state.setIn(selectedIndexPath, suggestionList.size - 1)
       }
-      state = updateEntireUrl(state, state.getIn(activeFrameStatePath(state).concat(['navbar', 'urlbar', 'suggestions', 'suggestionList']), suggestionList))
       break
     }
     case windowConstants.WINDOW_NEXT_URL_BAR_SUGGESTION_SELECTED: {
@@ -313,7 +282,6 @@ const urlBarReducer = (state, action) => {
       } else if (selectedIndex === suggestionList.size - 1) {
         state = state.setIn(selectedIndexPath, 0)
       }
-      state = updateEntireUrl(state, state.getIn(activeFrameStatePath(state).concat(['navbar', 'urlbar', 'suggestions', 'suggestionList']), suggestionList))
       break
     }
     case windowConstants.WINDOW_URL_BAR_AUTOCOMPLETE_ENABLED:
