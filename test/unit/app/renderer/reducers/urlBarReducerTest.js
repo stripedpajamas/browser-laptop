@@ -238,19 +238,19 @@ describe('urlBarReducer', function () {
       })
     })
 
-    // describe('WINDOW_PREVIOUS_URL_BAR_SUGGESTION_SELECTED', function () {
-    //   it('turns off suggestions', function () {
-    //     const newState = urlBarReducer(windowState, {actionType: windowConstants.WINDOW_PREVIOUS_URL_BAR_SUGGESTION_SELECTED})
-    //     assert.equal(newState.getIn(['frames', 1, 'navbar', 'urlbar', 'suggestions', 'selectedIndex']), 1)
-    //   })
-    // })
+    describe('WINDOW_PREVIOUS_URL_BAR_SUGGESTION_SELECTED', function () {
+      it('turns off suggestions', function () {
+        const newState = urlBarReducer(windowState, {actionType: windowConstants.WINDOW_PREVIOUS_URL_BAR_SUGGESTION_SELECTED})
+        assert.equal(newState.getIn(['frames', 1, 'navbar', 'urlbar', 'suggestions', 'selectedIndex']), 1)
+      })
+    })
 
-    // describe('WINDOW_NEXT_URL_BAR_SUGGESTION_SELECTED', function () {
-    //   it('turns off suggestions', function () {
-    //     const newState = urlBarReducer(windowState, {actionType: windowConstants.WINDOW_NEXT_URL_BAR_SUGGESTION_SELECTED})
-    //     assert.equal(newState.getIn(['frames', 1, 'navbar', 'urlbar', 'suggestions', 'selectedIndex']), 3)
-    //   })
-    // })
+    describe('WINDOW_NEXT_URL_BAR_SUGGESTION_SELECTED', function () {
+      it('turns off suggestions', function () {
+        const newState = urlBarReducer(windowState, {actionType: windowConstants.WINDOW_NEXT_URL_BAR_SUGGESTION_SELECTED})
+        assert.equal(newState.getIn(['frames', 1, 'navbar', 'urlbar', 'suggestions', 'selectedIndex']), 3)
+      })
+    })
 
     describe('APP_URL_BAR_TEXT_CHANGED', function () {
       // TODO
